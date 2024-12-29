@@ -1,20 +1,20 @@
 ---
 services:
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana-enterprise:latest
     ports:
       - 13000:3000
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=grafana-clickhouse-datasource
     volumes:
-      - ./grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboard.json:/etc/grafana/dashboards/dashboard.json
       - grafana:/var/lib/grafana
 
   clickhouse:
     image: clickhouse/clickhouse-server:latest
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  
+      - ./clickhouse:/docker-entrypoint-initdb.d
     ports:
       - 18123:8123
       - 19000:9000
