@@ -40,3 +40,10 @@ CREATE TABLE default.metrics
 )
 ENGINE = MergeTree
 ORDER BY (date, time)
+
+
+CREATE TABLE default.files
+(
+    name String,
+    saved_at DateTime
+)

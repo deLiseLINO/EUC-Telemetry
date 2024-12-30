@@ -1,7 +1,11 @@
 package repository
 
-import "metrics-exporter/internal/model"
+import (
+	"context"
+	"metrics-exporter/internal/model"
+)
 
 type MetricsRepository interface {
-	SaveMetrics(metrics []model.Metric) error
+	SaveMetricsAndFiles(ctx context.Context, metrics []model.Metric, files []string) error
+	GetExportedFiles(ctx context.Context) ([]string, error)
 }

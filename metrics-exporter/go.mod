@@ -2,7 +2,10 @@ module metrics-exporter
 
 go 1.23.1
 
-require github.com/ClickHouse/clickhouse-go/v2 v2.30.0
+require (
+	github.com/ClickHouse/clickhouse-go/v2 v2.30.0
+	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
+)
 
 require (
 	github.com/ClickHouse/ch-go v0.61.5 // indirect
