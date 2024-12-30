@@ -1,4 +1,4 @@
-CREATE TABLE default.metrics
+CREATE TABLE IF NOT EXISTS default.metrics
 (
     -- Date and Time
     date Date,
@@ -39,11 +39,11 @@ CREATE TABLE default.metrics
     alert Int32
 )
 ENGINE = MergeTree
-ORDER BY (date, time)
+ORDER BY (date, time);
 
-
-CREATE TABLE default.files
-(
+CREATE TABLE IF NOT EXISTS default.files (
     name String,
     saved_at DateTime
 )
+ENGINE = MergeTree()
+ORDER BY saved_at;
