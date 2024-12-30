@@ -1,14 +1,28 @@
 ---
 services:
+  metrics-exporter:
+    build: ./metrics-exporter
+    ports:
+      - 18080:8080
+      - 18081:8081
+    restart: on-failure
+    volumes:
+      - ./metrics-exporter/wheel-logs:/wheel-logs
+    depends_on:
+      - clickhouse
+
   grafana:
     image: grafana/grafana-enterprise:latest
     ports:
       - 13000:3000
     environment:
       - GF_INSTALL_PLUGINS=grafana-clickhouse-datasource
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/dashboards/dashboard.json
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./grafana/dashboard.json:/etc/grafana/dashboards/dashboard.json
+      - ./grafana/dashboards:/etc/grafana/dashboards
       - grafana:/var/lib/grafana
 
   clickhouse:
