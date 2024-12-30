@@ -1,43 +1,41 @@
 package model
 
-import "time"
-
 type Metric struct {
 	// Date and Time
-	Date time.Time `json:"date"`
-	Time time.Time `json:"time"`
+	Date string `csv:"date"`
+	Time string `csv:"time"`
 
 	// GPS Data
-	Latitude    float64 `json:"latitude"`
-	Longitude   float64 `json:"longitude"`
-	GPSSpeed    float32 `json:"gps_speed"`
-	GPSAlt      float32 `json:"gps_alt"`
-	GPSHeading  float32 `json:"gps_heading"`
-	GPSDistance int32   `json:"gps_distance"`
+	Latitude    float64 `csv:"latitude"`
+	Longitude   float64 `csv:"longitude"`
+	GPSSpeed    float32 `csv:"gps_speed"`
+	GPSAlt      float32 `csv:"gps_alt"`
+	GPSHeading  float32 `csv:"gps_heading"`
+	GPSDistance int32   `csv:"gps_distance"`
 
 	// Speed and Power
-	Speed        float32 `json:"speed"`
-	Voltage      float32 `json:"voltage"`
-	PhaseCurrent float32 `json:"phase_current"`
-	Current      float32 `json:"current"`
-	Power        float32 `json:"power"`
-	Torque       float32 `json:"torque"`
-	PWM          float32 `json:"pwm"`
+	Speed        float32 `csv:"speed"`
+	Voltage      float32 `csv:"voltage"`
+	PhaseCurrent float32 `csv:"phase_current"`
+	Current      float32 `csv:"current"`
+	Power        float32 `csv:"power"`
+	Torque       float32 `csv:"torque"`
+	PWM          float32 `csv:"pwm"`
 
 	// Battery and Distance
-	BatteryLevel  int32 `json:"battery_level"`
-	Distance      int32 `json:"distance"`
-	TotalDistance int32 `json:"totaldistance"`
+	BatteryLevel  int32 `csv:"battery_level"`
+	Distance      int32 `csv:"distance"`
+	TotalDistance int32 `csv:"totaldistance"`
 
 	// Temperature
-	SystemTemp int32 `json:"system_temp"`
-	Temp2      int32 `json:"temp2"`
+	SystemTemp int32 `csv:"system_temp"`
+	Temp2      int32 `csv:"temp2"`
 
 	// Orientation
-	Tilt float32 `json:"tilt"`
-	Roll float32 `json:"roll"`
+	Tilt float32 `csv:"tilt"`
+	Roll float32 `csv:"roll"`
 
 	// Mode and Alerts
-	Mode  int32 `json:"mode"`
-	Alert int32 `json:"alert"`
+	Mode  int32 `csv:"mode"`
+	Alert int32 `csv:"alert"`
 }
