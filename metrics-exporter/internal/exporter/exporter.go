@@ -13,17 +13,17 @@ import (
 type exporter struct {
 	repo        repository.MetricsRepository
 	metricsCh   chan map[string][]model.Metric
-	wg          sync.WaitGroup
+	wg          *sync.WaitGroup
 	exportedMap map[string]struct{}
 	mu          sync.Mutex
 	closed      bool
 }
 
-func New(repo repository.MetricsRepository) *exporter {
+func New(repo repository.MetricsRepository, wg *sync.WaitGroup) *exporter {
 	return &exporter{
 		repo:        repo,
 		metricsCh:   make(chan map[string][]model.Metric),
-		wg:          sync.WaitGroup{},
+		wg:          wg,
 		exportedMap: make(map[string]struct{}),
 	}
 }
@@ -38,8 +38,7 @@ func (e *exporter) Run(ctx context.Context) error {
 		e.exportedMap[f] = struct{}{}
 	}
 
-	ctxTimeout, cancel := context.WithTimeout(context.Background(), time.Minute*3)
-	defer cancel()
+	ctxTimeout, cancel := context.WithTimeout(context.Background(), time.Minute*5)
 
 	e.wg.Add(1)
 	go func() {
@@ -47,9 +46,14 @@ func (e *exporter) Run(ctx context.Context) error {
 		for {
 			select {
 			case <-ctx.Done():
-				e.stop()
+				cancel()
 				return
-			case metricsMap := <-e.metricsCh:
+			case metricsMap, ok := <-e.metricsCh:
+				if !ok {
+					return
+				}
+				slog.Info("exporting metrics", "count", len(metricsMap))
+
 				var (
 					metrics []model.Metric
 					files   []string
@@ -63,6 +67,7 @@ func (e *exporter) Run(ctx context.Context) error {
 					}
 				}
 				e.mu.Unlock()
+
 				err := e.repo.SaveMetricsAndFiles(ctxTimeout, metrics, files)
 				if err != nil {
 					slog.Error("failed to save metrics", slog.Any("error", err))
@@ -79,6 +84,7 @@ func (e *exporter) Write(metricsMap map[string][]model.Metric) {
 	}
 	if len(metricsMap) > 0 {
 		e.metricsCh <- metricsMap
+		slog.Info("metrics exported", "count", len(metricsMap))
 	}
 }
 
@@ -94,7 +100,7 @@ func (e *exporter) FilterFiles(files []string) []string {
 	return filteredFiles
 }
 
-func (e *exporter) stop() {
+func (e *exporter) Stop() {
 	e.closed = true
 	close(e.metricsCh)
 	slog.Info("waiting for exporter to finish the tasks")
