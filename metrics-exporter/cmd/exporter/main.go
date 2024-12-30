@@ -1,23 +1,30 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
+	csvprovider "metrics-exporter/internal/csv-provider"
 	"metrics-exporter/internal/exporter"
-	"metrics-exporter/internal/model"
 	clickhouserepo "metrics-exporter/internal/repository/clickhouse-repo"
 	clickhouseconnect "metrics-exporter/pkg/clickhouse-connect"
 )
 
 const (
-	address      = "clickhouse:9000"
-	user         = "default"
-	password     = ""
-	database     = "default"
-	metricsTable = "metrics"
+	address         = "clickhouse:9000"
+	user            = "default"
+	password        = ""
+	database        = "default"
+	metricsTable    = "metrics"
+	savedFilesTable = "saved_files"
+
+	csvFileDir = "csv"
 )
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	conn, err := clickhouseconnect.New(
 		address,
 		user,
@@ -25,20 +32,23 @@ func main() {
 		database,
 	)
 	if err != nil {
-		panic(fmt.Errorf("failed to connect to ClickHouse: %w", err))
+		panic(fmt.Errorf("failed to connect to clickhouse: %w", err))
 	}
-
-	slog.Info("Connected to ClickHouse")
+	slog.Info("connected to clickhouse")
 
 	repo := clickhouserepo.NewMetricsRepository(
 		*conn,
 		metricsTable,
+		savedFilesTable,
 	)
 
-	exporter := exporter.New(
-		repo,
-		make(chan []model.Metric),
-	)
-	
-	exporter.Start()
+	exporter := exporter.New(repo)
+	if err := exporter.Run(ctx); err != nil {
+		panic(fmt.Errorf("failed to run exporter: %w", err))
+	}
+
+	provider := csvprovider.New(exporter)
+	if err = provider.ProvideFromCsv(csvFileDir); err != nil {
+		panic(fmt.Errorf("failed to provide metrics: %w", err))
+	}
 }
