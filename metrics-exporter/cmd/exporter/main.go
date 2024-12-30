@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	address         = "localhost:19000"
+	address         = "clickhouse:9000"
 	user            = "default"
 	password        = ""
 	database        = "default"
