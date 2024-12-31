@@ -1,6 +1,6 @@
 # EUC Telemetry
 
-This solution creates a visualization system for monowheel logs using **Grafana**, **ClickHouse**, and a **Go** application (metrics-exporter). The metrics-exporter processes CSV log files ([WheelLog Android app](https://github.com/Wheellog/Wheellog.Android) format), and inserts them into **ClickHouse**. **Grafana** is used to visualize the data with a pre-configured dashboard.
+This solution creates a visualization system for monowheel logs using **Grafana**, **ClickHouse**, and a **Go** application (metrics-exporter). The metrics-exporter processes CSV log files ([WheelLog Android app](https://github.com/Wheellog/Wheellog.Android) format) and inserts them into **ClickHouse**. **Grafana** is used to visualize the data with a pre-configured dashboard.
 
 ![Dashboard](image/README/2024-12-31-16-30.png)
 
@@ -35,6 +35,8 @@ This will launch:
 - ClickHouse
 - Grafana
 - Metrics exporter (for once)
+
+Note: By default, this repository includes example CSV log files from my Kingsong S18L wheel. These example log files will automatically be loaded into the database and displayed on the Grafana dashboards as soon as the services start. This allows you to immediately visualize data from the example logs without needing to add your own.
 
 ### 3. Accessing Grafana
 
