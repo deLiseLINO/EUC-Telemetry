@@ -76,8 +76,7 @@ func (m *metricsRepository) saveMetrics(ctx context.Context, metrics []model.Met
 	for _, metric := range metrics {
 		t, err := time.Parse("2006-01-02 15:04:05.000", fmt.Sprintf("%v %v", metric.Date, metric.Time))
 		if err != nil {
-			slog.Error("failed to parse time", "time", metric.Time, "error", err)
-			return err
+			slog.Warn("failed to parse time", "time", metric.Time, "error", err)
 		}
 
 		err = batch.Append(
