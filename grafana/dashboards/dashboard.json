@@ -329,7 +329,7 @@
           },
           "pluginVersion": "4.5.1",
           "queryType": "table",
-          "rawSql": "SELECT \n    toStartOfMinute(time) AS time_interval,  -- округляем время до минут (можно настроить на более мелкие интервалы)\n    totaldistance / 1000 as total_km\nFROM \n    metrics\nWHERE \n    $__timeFilter(time)\n    and totaldistance != 0\nORDER BY \n    time_interval\n",
+          "rawSql": "SELECT \n    toStartOfMinute(time) AS time_interval,  -- округляем время до минут (можно настроить на более мелкие интервалы)\n    totaldistance / 1000 as total_km\nFROM \n    metrics\nWHERE \n    $__timeFilter(time)\n    and totaldistance != 0\nORDER BY \n    time_interval desc\n",
           "refId": "A"
         }
       ],
